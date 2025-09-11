@@ -1,0 +1,18 @@
+services:
+  indyscan-proxy:
+    image: traefik:3.5
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    command:
+      - --providers.docker=true
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.resolver.acme.tlschallenge=true
+      - --certificatesresolvers.resolver.acme.storage=/letsencrypt/acme.json
+    networks:
+      - indyscan
+    ports:
+      - 443:443
+    volumes:
+      - .letsencrypt:/letsencrypt
+      - ${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro

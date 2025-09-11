@@ -88,3 +88,9 @@ services:
       - indyscan
     ports:
       - 3707:3707
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.indyscan-webapp.rule=Host(`indyscan.bcovrin.vonx.io`)
+      - traefik.http.routers.indyscan-webapp.entrypoints=websecure
+      - traefik.http.routers.indyscan-webapp.tls.certresolver=resolver
+      - traefik.http.services.indyscan-webapp.loadbalancer.server.port=3707
