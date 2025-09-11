@@ -1,4 +1,6 @@
-version: '3.7'
+include:
+  - ./docker-compose.indyscan.yml
+  - ./docker-compose.elastic.yml
 
 networks:
   indyscan:
@@ -6,9 +8,6 @@ networks:
     driver: bridge
   esnet:
     name: esnet
-    driver: bridge
-  vcxnet:
-    name: vcxnet
     driver: bridge
 
 volumes:

@@ -1,5 +1,3 @@
-version: '3.7'
-
 x-standard-logging:
   &service-logging
   options:
@@ -17,7 +15,7 @@ x-ui-logging:
 services:
   indyscan-daemon:
     restart: unless-stopped
-    image: docker.pkg.github.com/patrik-stas/indyscan/indyscan-daemon:4.5.2-dependenciesvdr-tools-429
+    image: ${DOCKER_IMG_NAME_DAEMON:-ghcr.io/bcgov/indyscan/indyscan-daemon:4.6.1}
     container_name: indyscan-daemon
     logging: *service-logging
     depends_on:
@@ -26,14 +24,14 @@ services:
       - esnet
       - indyscan
     environment:
-      - WORKER_CONFIGS=/home/indyscan/indyscan-daemon/app-configs-docker/sovmain.json,/home/indyscan/indyscan-daemon/app-configs-docker/sovstaging.json,/home/indyscan/indyscan-daemon/app-configs-docker/sovbuilder.json
+      - WORKER_CONFIGS=/home/indyscan/indyscan-daemon/app-configs-docker/bcovtest.json
       - LOG_LEVEL=info
-      - ENABLE_LOGFILES=false
       - LOG_HTTP_REQUESTS=true
       - LOG_HTTP_RESPONSES=true
       - SERVER_ENABLED=true
       - SERVER_PORT=3709
       - AUTOSTART=true
+      - ENABLE_LOGFILES=false
     ports:
       - 3709:3709
     volumes:
@@ -41,7 +39,7 @@ services:
 
   indyscan-daemon-ui:
     restart: unless-stopped
-    image: docker.pkg.github.com/patrik-stas/indyscan/indyscan-daemon-ui:4.4.1
+    image: ${DOCKER_IMG_NAME_DAEMON_UI:-ghcr.io/patrik-stas/indyscan/indyscan-daemon-ui:4.6.1}
     container_name: indyscan-daemon-ui
     logging: *ui-logging
     environment:
@@ -55,12 +53,13 @@ services:
 
   indyscan-api:
     restart: unless-stopped
-    image: docker.pkg.github.com/patrik-stas/indyscan/indyscan-api:4.4.1
+    image: ${DOCKER_IMG_NAME_API:-ghcr.io/patrik-stas/indyscan/indyscan-api:4.6.1}
     container_name: indyscan-api
     logging: *service-logging
     environment:
-      - NETWORKS_CONFIG_PATH=/home/indyscan/indyscan-api/app-config-docker/sovrin.json
+      - NETWORKS_CONFIG_PATH=${INDYSCAN_API_CONFIG_PATH:-/home/indyscan/indyscan-api/app-config-docker/bcovrin.json}
       - ES_URL=http://indyscan-elasticsearch.esnet:9200
+      - AUTOSTART=true
       - LOG_LEVEL=info
       - PORT=3708
       - LOG_HTTP_REQUESTS=true
@@ -75,17 +74,16 @@ services:
 
   indyscan-webapp:
     restart: unless-stopped
-    image: docker.pkg.github.com/patrik-stas/indyscan/indyscan-webapp:4.4.1
+    image: ${DOCKER_IMG_NAME_WEBAPP:-ghcr.io/bcgov/indyscan/indyscan-webapp:4.6.2}
     container_name: indyscan-webapp
     logging: *ui-logging
     environment:
       - INDYSCAN_API_URL=http://indyscan-api.indyscan:3708
       - DAEMON_WS_URL=http://indyscan-daemon.indyscan:3709
       - PORT=3707
-      - LOG_LEVEL=warn
+      - LOG_LEVEL=info
       - LOG_HTTP_REQUESTS=true
       - LOG_HTTP_RESPONSES=true
-      - NODE_ENV=development
     networks:
       - indyscan
     ports:

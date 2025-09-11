@@ -1,5 +1,3 @@
-version: '3.7'
-
 x-es-logging:
   &es-logging
   options:
@@ -9,7 +7,7 @@ x-es-logging:
 
 services:
   indyscan-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    image: ${INDYSCAN_ELASTICSEARCH_IMAGE:-docker.elastic.co/elasticsearch/elasticsearch:7.6.1}
     container_name: indyscan-elasticsearch
     logging: *es-logging
     networks:
@@ -31,7 +29,3 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
-
-volumes:
-  indyscan-es:
-    driver: local
