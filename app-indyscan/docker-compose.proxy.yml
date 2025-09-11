@@ -1,6 +1,7 @@
 services:
   indyscan-proxy:
     image: traefik:3.5
+    container_name: traefik
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
