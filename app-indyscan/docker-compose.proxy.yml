@@ -16,3 +16,8 @@ services:
     volumes:
       - .letsencrypt:/letsencrypt
       - ${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro
+
+networks:
+  indyscan:
+    name: indyscan
+    external: true
