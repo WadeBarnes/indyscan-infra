@@ -3,6 +3,9 @@ include:
   - ./docker-compose.elastic.yml
 
 networks:
+  proxy:
+    name: proxy
+    external: true
   indyscan:
     name: indyscan
     driver: bridge

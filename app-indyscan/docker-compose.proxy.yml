@@ -7,18 +7,27 @@ services:
       - no-new-privileges:true
     command:
       - --providers.docker=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entryPoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.asDefault=true
       - --certificatesresolvers.resolver.acme.tlschallenge=true
       - --certificatesresolvers.resolver.acme.storage=/letsencrypt/acme.json
     networks:
+      - proxy
       - indyscan
     ports:
+      - 80:80
       - 443:443
     volumes:
       - .letsencrypt:/letsencrypt
       - ${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro
 
 networks:
+  proxy:
+    name: proxy
+    driver: bridge
   indyscan:
     name: indyscan
     external: true
